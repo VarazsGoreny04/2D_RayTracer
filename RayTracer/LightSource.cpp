@@ -29,12 +29,22 @@ std::vector<Ray> LightSource::CastRays()
 	return rays;
 }
 
-std::vector<glm::vec2> LightSource::Shine(std::vector<Vertex> points)
+std::vector<glm::vec2> LightSource::Shine(SceneObject sceneObject)
 {
-	std::vector<glm::vec2> intersections(rayCount);
+	std::vector<glm::vec2> points = {};
+
+	for (Vertex vertex : sceneObject.objContainer.meshObject.vertexArray)
+	{
+		points.push_back(vertex.position * sceneObject.transform);
+	}
+
+	std::vector<glm::vec2> intersections = {};
 
 	for (Ray ray : CastRays())
+	{
+		//intersections.push_back(ray.direction + ray.origin);
 		intersections.push_back(Intersect(ray, points));
+	}
 
 	return intersections;
 }

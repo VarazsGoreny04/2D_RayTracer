@@ -89,7 +89,7 @@ protected:
 	// shaderekhez szükséges változók
 	GLuint m_programID = 0; // shaderek programja
 
-	bool lightSwitch = false;
+	bool showSceneObjects = false;
 	int state = 0;
 
 	// Shaderek inicializálása, és törlése

@@ -83,9 +83,20 @@ Ray::~Ray() {}
 	return ray;
 }*/
 
-glm::vec2 Intersect(Ray& a, Ray & b)
+glm::vec2 Intersect(Ray& ray, Ray & side)
 {
-	return (a.origin - b.origin) / (b.direction - a.direction);
+	glm::mat2 A(ray.direction, -side.direction);
+	glm::vec2 B = side.origin - ray.origin;
+
+	if (fabsf(glm::determinant(A)) < 1e-6)
+		return glm::vec2(ray.origin);
+
+	glm::vec2 X = glm::inverse(A) * B;
+
+	if (X.x < 0.0)
+		return glm::vec2(ray.origin);
+	else
+		return ray.direction * X.x + ray.origin;
 }
 
 glm::vec2 Intersect(Ray& ray, glm::vec2 a, glm::vec2 b)
@@ -112,6 +123,9 @@ glm::vec2 Intersect(Ray& ray, std::vector<Vertex> points)
 
 	for (int i = 0; i < length; ++i)
 	{
+		if (intersections[i] == ray.origin)
+			continue;
+
 		float distance = glm::distance(ray.origin, intersections[i]);
 
 		if (distance < minDistance)

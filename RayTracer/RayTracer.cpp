@@ -40,17 +40,17 @@ static MeshObject<Vertex> createQuad()
 	MeshObject<Vertex> mesh;
 
 	mesh.vertexArray = {
-		{{-0.5f,  0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
 		{{ 0.5f,  0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-		{{ 0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
+		{{-0.5f,  0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
 		{{-0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-		{{-0.5f,  0.5f, 0.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
+		{{ 0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
+		/*{{-0.5f,  0.5f, 0.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
 		{{ 0.5f,  0.5f, 0.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
 		{{ 0.5f, -0.5f, 0.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f}},
-		{{-0.5f, -0.5f, 0.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}},
+		{{-0.5f, -0.5f, 0.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}},*/
 	};
 
-	mesh.indexArray = { 0, 1, 2, 2, 3, 0, 4, 6, 5, 6, 4, 7 };
+	mesh.indexArray = { 0, 1, 2, 0, 2, 3/*, 4, 6, 5, 6, 4, 7 */};
 
 	return mesh;
 }
@@ -65,14 +65,14 @@ static MeshObject<Vertex> createCircle(int sides)
 		mesh.vertexArray.push_back({ {glm::cos(radian) / 2, glm::sin(radian) / 2, 0}, {0, 1, 0}, {0, 0} });
 	}
 
-	for (int i = 1; i < sides; ++i)
+	for (int i = 1; i < sides - 1; ++i)
 	{
 		mesh.indexArray.push_back(0);
 		mesh.indexArray.push_back(i);
 		mesh.indexArray.push_back(i + 1);
 	}
 
-	for (int i = 0; i < sides; ++i)
+	/*for (int i = 0; i < sides; ++i)
 	{
 		float radian = glm::radians(360.0f / sides * i);
 		mesh.vertexArray.push_back({ {glm::cos(radian) / 2, glm::sin(radian) / 2, 0}, {0, -1, 0}, {0, 0} });
@@ -83,7 +83,7 @@ static MeshObject<Vertex> createCircle(int sides)
 		mesh.indexArray.push_back(sides);
 		mesh.indexArray.push_back(i + 1);
 		mesh.indexArray.push_back(i);
-	}
+	}*/
 
 	return mesh;
 }
@@ -130,8 +130,6 @@ void RayTracer::InitObjects()
 	/*objects.push_back(SceneObject(quad, glm::translate(glm::vec3(-0.5, 0, 0)) * glm::scale(glm::vec3(0.1, 1, 1))));
 	objects.push_back(SceneObject(quad, glm::translate(glm::vec3(0, 0.5, 0)) * glm::scale(glm::vec3(1, 0.1, 1))));
 	objects.push_back(SceneObject(quad, glm::translate(glm::vec3(0, -0.5, 0)) * glm::scale(glm::vec3(1, 0.1, 1))));*/
-
-	objects.push_back(SceneObject(circle, glm::scale(glm::vec3(0.03, 0.03, 1))));
 }
 
 bool RayTracer::Init()
@@ -192,7 +190,7 @@ void RayTracer::SetCommonUniforms()
 	glProgramUniformMatrix4fv(m_programID, ul(m_programID, "viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
 	// - Fényforrások beállítása
 	glProgramUniform3fv(m_programID, ul(m_programID, "cameraPosition"), 1, glm::value_ptr(m_camera.GetEye()));
-	glProgramUniform1f(m_programID, ul(m_programID, "lightSwitch"), lightSwitch);
+	glProgramUniform1f(m_programID, ul(m_programID, "lightSwitch"), showSceneObjects);
 
 	glProgramUniform1i(m_programID, ul(m_programID, "state"), state);
 }
@@ -206,9 +204,6 @@ void RayTracer::DrawObject(OGLObject& obj, const glm::mat4& world) {
 
 void RayTracer::RenderSceneObject(SceneObject sceneObject)
 {
-	glUniform1i(ul("state"), 0);
-	glUniform1i(ul("lightSwitch"), false);
-
 	DrawObject(sceneObject.objContainer.oglObject, sceneObject.transform);
 }
 
@@ -228,11 +223,15 @@ void RayTracer::Render()
 	glBindSampler(0, m_SamplerID);
 	//glBindSampler(1, m_SamplerID);
 
+	if (showSceneObjects)
+		RenderSceneObject(SceneObject(circle, glm::translate(glm::vec3(lightSource.origin, 0)) * glm::scale(glm::vec3(0.03, 0.03, 1))));
+
 	for (const SceneObject& sceneObject : objects)
 	{
-		//RenderSceneObject(sceneObject);
+		if (showSceneObjects)
+			RenderSceneObject(sceneObject);
 
-		std::vector<glm::vec2> hits = lightSource.Shine(sceneObject.objContainer.meshObject.vertexArray);
+		std::vector<glm::vec2> hits = lightSource.Shine(sceneObject);
 
 		for (glm::vec2 hit : hits)
 			RenderSceneObject(SceneObject(circle, glm::translate(glm::vec3(hit.x, hit.y, 0.1)) * glm::scale(glm::vec3(0.02, 0.02, 0.1))));
@@ -251,7 +250,7 @@ void RayTracer::RenderGUI()
 {
 	if (ImGui::Begin("Variables"))
 	{
-		ImGui::Checkbox("Lighting", &lightSwitch);
+		ImGui::Checkbox("Show SceneObjects", &showSceneObjects);
 
 		glm::vec3 camPos = m_camera.GetEye();
 		ImGui::DragFloat3("Camera position", &camPos.x);
