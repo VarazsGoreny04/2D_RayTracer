@@ -15,7 +15,7 @@
 
 // Utils
 #include "../includes/Camera.h"
-#include "../includes/CameraManipulator.h"
+#include "../includes/ObjectManipulator.h"
 #include "../includes/GLUtils.hpp"
 
 // Mine
@@ -24,8 +24,8 @@
 
 struct SUpdateInfo
 {
-	float ElapsedTimeInSec = 0.0f; // Program indulása óta eltelt idõ
-	float DeltaTimeInSec = 0.0f;   // Elõzõ Update óta eltelt idõ
+	float ElapsedTimeInSec = 0.0f;
+	float DeltaTimeInSec = 0.0f;
 };
 
 struct Intersection
@@ -47,7 +47,6 @@ public:
 	void Render();
 	void RenderGUI();
 
-	//void RenderTable();
 	void RenderSceneObject(SceneObject object);
 
 	void KeyboardDown(const SDL_KeyboardEvent&);
@@ -63,13 +62,12 @@ public:
 protected:
 	void SetupDebugCallback();
 
-	// Adat változók
+	// Other data
 
 	float m_ElapsedTimeInSec = 0.0f;
 
 	bool showSceneObjects = false;
 	LightSource lightSource = LightSource(glm::vec2(0, 0), 0, 120, 200);
-
 
 	// Picking
 
@@ -79,39 +77,36 @@ protected:
 
 	glm::uvec2 m_windowSize = glm::uvec2(0, 0);
 
-	// Kamera
+	// Camera
+
 	Camera m_camera;
-	CameraManipulator m_cameraManipulator;
+	ObjectManipulator m_objectManipulator = ObjectManipulator(lightSource.origin, lightSource.direction);
 
-	//
-	// OpenGL-es dolgok
-	//
+	// Shader
 
-	// shaderekhez szükséges változók
-	GLuint m_programID = 0; // shaderek programja
+	GLuint m_programID = 0;
 
 	int state = 0;
 
-	// Shaderek inicializálása, és törlése
 	void InitShaders();
 	void CleanShaders() const;
 
-	// Geometriával kapcsolatos változók
+	// Geometry
 
 	void SetCommonUniforms();
 	void DrawObject(OGLObject& obj, const glm::mat4& world);
-	
+
 	ObjectContainer quad;
 	ObjectContainer circle;
 
 	std::vector<SceneObject> objects;
 
-	// Geometria inicializálása, és törlése
 	void InitGeometry();
 	void CleanGeometry();
 	void InitObjects();
 
-	// Textúrázás, és változói
+	// Texture
+
 	GLuint m_SamplerID = 0;
 
 	void InitTextures();

@@ -4,17 +4,10 @@
 
 #include <SDL2/SDL.h>
 
-CameraManipulator::CameraManipulator() {}
-
-CameraManipulator::~CameraManipulator() {}
-
-void CameraManipulator::SetCamera(Camera* _pCamera)
+CameraManipulator::CameraManipulator(LightSource& lightSource)
 {
-	m_pCamera = _pCamera;
+	this->lightSource = lightSource;
 
-	if (!m_pCamera) return;
-
-	// Set the initial spherical coordinates.
 	m_center = m_pCamera->GetAt();
 	glm::vec3 ToAim = m_center - m_pCamera->GetEye();
 
@@ -26,30 +19,20 @@ void CameraManipulator::SetCamera(Camera* _pCamera)
 	m_worldUp = m_pCamera->GetWorldUp();
 }
 
+CameraManipulator::~CameraManipulator() {}
+
 void CameraManipulator::Update(float _deltaTime)
 {
-	if (!m_pCamera) return;
-
-	// Frissitjuk a kamerát a Model paraméterek alapján.
-
-	// Az új nézési irányt a gömbi koordináták alapján számoljuk ki.
 	glm::vec3 lookDirection(cosf(m_u) * sinf(m_v),
 		cosf(m_v),
 		sinf(m_u) * sinf(m_v));
-	// Az új kamera pozíciót a nézési irány és a távolság alapján számoljuk ki.
 	glm::vec3 eye = m_center - m_distance * lookDirection;
 
-	// Az új felfelé irány a világ felfelével legyen azonos.
-	glm::vec3 up = m_pCamera->GetWorldUp();
-
-	// Az új jobbra irányt a nézési irány és a felfelé irány keresztszorzatából számoljuk ki.
-	glm::vec3 right = glm::normalize(glm::cross(lookDirection, up));
-
-	// Az új előre irányt a felfelé és jobbra irányok keresztszorzatából számoljuk ki.
-	glm::vec3 forward = glm::cross(up, right);
+	glm::vec3 right = glm::normalize(glm::cross(lookDirection, m_worldUp));
+	glm::vec3 forward = glm::cross(m_worldUp, right);
 
 	// Az új elmozdulásat a kamera mozgás irányának és sebességének a segítségével számoljuk ki.
-	glm::vec3 deltaPosition = (m_goForward * forward + m_goRight * right + m_goUp * up) * m_speed * _deltaTime;
+	glm::vec3 deltaPosition = (m_goForward * forward + m_goRight * right + m_goUp * m_worldUp) * m_speed * _deltaTime;
 
 	// Az új kamera pozíciót és nézési cél pozíciót beállítjuk.
 	eye += deltaPosition;
@@ -79,12 +62,6 @@ void CameraManipulator::KeyboardDown(const SDL_KeyboardEvent& key)
 		break;
 	case SDLK_d:
 		m_goRight = 1;
-		break;
-	case SDLK_e:
-		m_goUp = 1;
-		break;
-	case SDLK_q:
-		m_goUp = -1;
 		break;
 	}
 }

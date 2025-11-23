@@ -1,16 +1,6 @@
 #include "Ray.h"
 
-Ray::Ray()
-{
-	origin = glm::vec3(0);
-	direction = glm::vec3(0);
-}
-
-Ray::Ray(glm::vec3 origin, glm::vec3 direction)
-{
-	this->origin = origin;
-	this->direction = direction;
-}
+Ray::Ray(glm::vec3 origin, glm::vec3 direction) : origin(origin), direction(direction) {}
 
 Ray::Ray(glm::vec2 origin, glm::vec2 direction)
 {

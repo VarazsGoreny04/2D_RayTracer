@@ -1,12 +1,6 @@
 #include "LightSource.h"
 
-LightSource::LightSource(glm::vec2 origin, float direction, int fov, int rayCount)
-{
-	this->origin = origin;
-	this->direction = direction;
-	this->fov = fov;
-	this->rayCount = rayCount;
-}
+LightSource::LightSource(glm::vec2 origin, float direction, int fov, int rayCount) : origin(origin), direction(direction), fov(fov), rayCount(rayCount) {}
 
 static std::vector<std::vector<glm::vec2>> GetAllPoints(std::vector<SceneObject> sceneObjects)
 {
@@ -37,12 +31,13 @@ static Ray CastRay(glm::vec2 origin, float angle)
 
 static std::vector<Ray> CastRays(glm::vec2 origin, float direction, int fov, int rayCount)
 {
-	std::vector<Ray> rays(rayCount);
+	std::vector<Ray> rays = {};
+	float halfOfRayCount = (rayCount - 1.f) / 2.f;
 
-	for (int i = 0; i < rayCount; ++i)
+	for (float i = -halfOfRayCount; i <= halfOfRayCount; ++i)
 	{
 		float radian = glm::radians(static_cast<float>(fov) / rayCount * i + direction);
-		rays[i] = CastRay(origin, radian);
+		rays.push_back(CastRay(origin, radian));
 	}
 
 	return rays;

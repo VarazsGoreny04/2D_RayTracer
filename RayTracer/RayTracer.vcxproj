@@ -82,7 +82,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="From2D.cpp" />
     <ClCompile Include="LightSource.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="RayTracer.cpp" />
@@ -91,11 +90,10 @@
     <ClCompile Include="..\includes\GLUtils.cpp" />
     <ClCompile Include="..\includes\Camera.cpp" />
     <ClCompile Include="..\includes\ObjParser.cpp" />
-    <ClCompile Include="..\includes\CameraManipulator.cpp" />
+    <ClCompile Include="..\includes\ObjectManipulator.cpp" />
     <ClCompile Include="SceneObject.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="From2D.h" />
     <ClInclude Include="LightSource.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RayTracer.h" />
@@ -103,7 +101,7 @@
     <ClInclude Include="..\includes\GLUtils.hpp" />
     <ClInclude Include="..\includes\Camera.h" />
     <ClInclude Include="..\includes\ObjParser.h" />
-    <ClInclude Include="..\includes\CameraManipulator.h" />
+    <ClInclude Include="..\includes\ObjectManipulator.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneObject.h" />
   </ItemGroup>

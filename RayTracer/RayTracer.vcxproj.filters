@@ -30,9 +30,6 @@
     <ClCompile Include="..\includes\Camera.cpp">
       <Filter>GLUtils</Filter>
     </ClCompile>
-    <ClCompile Include="..\includes\CameraManipulator.cpp">
-      <Filter>GLUtils</Filter>
-    </ClCompile>
     <ClCompile Include="..\includes\GLUtils.cpp">
       <Filter>GLUtils</Filter>
     </ClCompile>
@@ -54,15 +51,12 @@
     <ClCompile Include="SceneObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="From2D.cpp">
+    <ClCompile Include="..\includes\ObjectManipulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\Camera.h">
-      <Filter>GLUtils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\includes\CameraManipulator.h">
       <Filter>GLUtils</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\GLUtils.hpp">
@@ -89,7 +83,7 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="From2D.h">
+    <ClInclude Include="..\includes\ObjectManipulator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
